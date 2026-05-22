@@ -1,0 +1,966 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>TaliwangHQ • Vibe & Taste Premium</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ============================================
+       DESIGN SYSTEM & VARIABLES
+    ============================================ */
+    :root {
+      --c-bg:       #0a0a0a;
+      --c-surface:  #111111;
+      --c-card:     #171717;
+      --c-border:   rgba(255,255,255,0.05);
+      --c-text:     #f4f1eb;
+      --c-muted:    #948f8a;
+      --c-primary:  #ff5e24;
+      --c-primary-glow: rgba(255, 94, 36, 0.15);
+      --c-secondary:#fcc419;
+      --c-accent:   #10b981;
+      --c-white:    #ffffff;
+
+      --f-display: 'Playfair Display', Georgia, serif;
+      --f-body:    'DM Sans', sans-serif;
+      --f-mono:    'Space Mono', monospace;
+
+      --r-sm: 10px;
+      --r-md: 18px;
+      --r-lg: 28px;
+      --r-xl: 48px;
+
+      --nav-h: 80px;
+      --transition: cubic-bezier(0.16, 1, 0.3, 1) 0.6s;
+    }
+
+    .light-mode {
+      --c-bg:      #faf8f5;
+      --c-surface: #ffffff;
+      --c-card:    #f5f2eb;
+      --c-border:  rgba(0,0,0,0.06);
+      --c-text:    #1c1a18;
+      --c-muted:   #736e69;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+
+    body {
+      font-family: var(--f-body);
+      background: var(--c-bg);
+      color: var(--c-text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* Grain Overlay */
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.02; pointer-events: none; z-index: 9999;
+    }
+
+    ::selection { background: var(--c-primary); color: #fff; }
+    img { display: block; max-width: 100%; border-radius: inherit; }
+    a { text-decoration: none; color: inherit; }
+    button { font-family: var(--f-body); border: none; cursor: pointer; background: none; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-primary); border-radius: 99px; }
+
+    /* Custom Magic Cursor (Gen-Z Trend) */
+    .custom-cursor {
+      width: 20px; height: 20px; border: 2px solid var(--c-primary);
+      border-radius: 50%; position: fixed; transform: translate(-50%, -50%);
+      pointer-events: none; z-index: 10000; transition: width 0.2s, height 0.2s, background-color 0.2s;
+    }
+    .custom-cursor.hovered {
+      width: 40px; height: 40px; background-color: var(--c-primary-glow); border-color: var(--c-primary);
+    }
+    @media (max-width: 1024px) { .custom-cursor { display: none; } }
+
+    /* ============================================
+       NAVIGATION
+    ============================================ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: var(--nav-h);
+      display: flex; align-items: center; padding: 0 clamp(1.5rem, 6vw, 5rem);
+      justify-content: space-between; border-bottom: 1px solid var(--c-border);
+      background: rgba(10,10,10,0.75); backdrop-filter: blur(25px); transition: background var(--transition);
+    }
+    .light-mode .nav { background: rgba(250,248,245,0.8); }
+
+    .nav-logo {
+      font-family: var(--f-display); font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--c-primary); }
+    .nav-logo em { font-style: normal; color: var(--c-secondary); }
+
+    .nav-links { display: flex; gap: 3rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--c-muted); transition: color 0.3s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 2px;
+      background: var(--c-primary); transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--c-text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-actions { display: flex; align-items: center; gap: 1.2rem; }
+    .nav-btn {
+      width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--c-surface); border: 1px solid var(--c-border); color: var(--c-text); transition: all 0.3s; position: relative;
+    }
+    .nav-btn:hover { transform: scale(1.05); border-color: var(--c-primary); color: var(--c-primary); }
+    
+    .cart-badge {
+      position: absolute; top: -2px; right: -2px; background: var(--c-primary); color: #fff;
+      font-family: var(--f-mono); font-size: 0.65rem; font-weight: 700; border-radius: 99px;
+      padding: 2px 6px; min-width: 20px; text-align: center; box-shadow: 0 4px 10px var(--c-primary-glow);
+    }
+
+    .nav-cta {
+      background: var(--c-primary); color: #fff; padding: 0.7rem 1.6rem; border-radius: var(--r-sm);
+      font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; transition: all 0.3s;
+      box-shadow: 0 4px 15px var(--c-primary-glow);
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--c-primary-glow); }
+
+    .hamburger { display: none; flex-direction: column; gap: 6px; cursor: pointer; }
+    .hamburger span { width: 26px; height: 2px; background: var(--c-text); border-radius: 2px; transition: 0.3s; }
+
+    /* ============================================
+       HERO
+    ============================================ */
+    .hero {
+      min-height: 100vh; display: grid; grid-template-columns: 1.2fr 0.8fr; overflow: hidden; position: relative;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: clamp(6rem, 10vw, 12rem) clamp(1.5rem, 6vw, 5rem) 4rem;
+    }
+    .hero-eyebrow {
+      font-family: var(--f-mono); font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--c-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .hero-eyebrow::before { content: ''; display: inline-block; width: 40px; height: 1px; background: var(--c-primary); }
+    
+    .hero h1 {
+      font-family: var(--f-display); font-size: clamp(3rem, 6.5vw, 5.5rem); font-weight: 900; line-height: 1.05;
+      letter-spacing: -2.5px; margin-bottom: 2rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--c-primary); font-weight: 700; }
+    .hero-sub { font-size: 1.1rem; color: var(--c-muted); max-width: 500px; margin-bottom: 3rem; line-height: 1.8; }
+    
+    .hero-buttons { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--c-primary); color: #fff; padding: 1rem 2.2rem; border-radius: var(--r-sm);
+      font-weight: 700; font-size: 0.95rem; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.8rem;
+      box-shadow: 0 10px 25px var(--c-primary-glow);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px var(--c-primary-glow); }
+    
+    .btn-secondary {
+      color: var(--c-text); padding: 1rem 2.2rem; border-radius: var(--r-sm);
+      font-weight: 700; font-size: 0.95rem; border: 1px solid var(--c-border); transition: all 0.3s;
+      display: inline-flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.02);
+    }
+    .btn-secondary:hover { background: var(--c-surface); border-color: var(--c-text); transform: translateY(-2px); }
+
+    .hero-stats {
+      display: flex; gap: 3.5rem; margin-top: 4rem; padding-top: 2.5rem; border-top: 1px solid var(--c-border);
+    }
+    .stat-item .num { font-family: var(--f-display); font-size: 2.5rem; font-weight: 900; color: var(--c-primary); line-height: 1; }
+    .stat-item .label { font-size: 0.85rem; color: var(--c-muted); margin-top: 0.4rem; font-weight: 500; }
+
+    .hero-right { position: relative; }
+    .hero-right img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.9); transition: transform 12s cubic-bezier(0.1, 1, 0.1, 1); }
+    .hero:hover .hero-right img { transform: scale(1.06); }
+    .hero-right::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--c-bg) 0%, transparent 20%), linear-gradient(to top, var(--c-bg) 0%, transparent 10%);
+    }
+
+    .hero-badge {
+      position: absolute; bottom: 4rem; left: -2rem; background: var(--c-surface);
+      border: 1px solid var(--c-border); color: var(--c-text); border-radius: var(--r-md);
+      padding: 1.2rem 1.8rem; z-index: 3; font-weight: 700; font-size: 0.9rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 1rem;
+    }
+
+    /* ============================================
+       MARQUEE
+    ============================================ */
+    .marquee-bar { background: var(--c-primary); padding: 1rem 0; overflow: hidden; }
+    .marquee-track { display: flex; animation: marquee 25s linear infinite; white-space: nowrap; }
+    .marquee-track span {
+      display: inline-flex; align-items: center; gap: 1.5rem; padding: 0 3rem;
+      font-family: var(--f-mono); font-size: 0.9rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #fff;
+    }
+    .marquee-track span i { color: var(--c-secondary); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ============================================
+       SECTION CONFIG
+    ============================================ */
+    section { padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 6vw, 5rem); }
+    .section-label {
+      font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--c-primary); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--f-display); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1.15; letter-spacing: -1px; margin-bottom: 1.5rem;
+    }
+    .section-title em { font-style: italic; color: var(--c-primary); font-weight: 400; }
+    .section-sub { color: var(--c-muted); max-width: 550px; font-size: 1.05rem; margin-bottom: 4rem; }
+
+    /* ============================================
+       MENU SECTION & NEW SEARCH FEATURE
+    ============================================ */
+    #menu { background: var(--c-surface); }
+    .menu-header {
+      display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 3rem; margin-bottom: 3.5rem;
+    }
+    .menu-controls { display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-end; }
+    
+    /* Search Bar Feature */
+    .search-wrap {
+      position: relative; width: 320px; max-width: 100%;
+    }
+    .search-wrap input {
+      width: 100%; background: var(--c-bg); border: 1px solid var(--c-border); padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+      border-radius: 99px; color: var(--c-text); font-family: var(--f-body); font-size: 0.9rem; outline: none; transition: all 0.3s;
+    }
+    .search-wrap input:focus { border-color: var(--c-primary); box-shadow: 0 0 15px var(--c-primary-glow); }
+    .search-wrap i { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); color: var(--c-muted); }
+
+    .filter-group { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .filter-btn {
+      padding: 0.6rem 1.4rem; border-radius: 99px; font-size: 0.85rem; font-weight: 700;
+      border: 1px solid var(--c-border); color: var(--c-muted); transition: all 0.3s;
+    }
+    .filter-btn:hover { border-color: var(--c-primary); color: var(--c-primary); }
+    .filter-btn.active { background: var(--c-primary); border-color: var(--c-primary); color: #fff; box-shadow: 0 5px 15px var(--c-primary-glow); }
+
+    .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+    .menu-card {
+      background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md);
+      overflow: hidden; transition: all var(--transition); display: flex; flex-direction: column;
+    }
+    .menu-card:hover { transform: translateY(-8px); border-color: rgba(255, 94, 36, 0.25); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    
+    .card-img-wrap { position: relative; height: 230px; overflow: hidden; border-radius: var(--r-md) var(--r-md) 0 0; }
+    .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .menu-card:hover .card-img-wrap img { transform: scale(1.08); }
+
+    .card-category {
+      position: absolute; top: 1.2rem; left: 1.2rem; background: rgba(10,10,10,0.75); backdrop-filter: blur(8px);
+      color: var(--c-secondary); font-family: var(--f-mono); font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 99px;
+    }
+    .card-wishlist {
+      position: absolute; top: 1.2rem; right: 1.2rem; width: 38px; height: 38px; border-radius: 50%;
+      background: rgba(10,10,10,0.5); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+      color: #fff; transition: all 0.3s;
+    }
+    .card-wishlist:hover, .card-wishlist.liked { background: var(--c-primary); color: white; }
+
+    .card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+    .card-rating { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--c-secondary); margin-bottom: 0.6rem; font-weight: 600; }
+    .card-name { font-family: var(--f-display); font-size: 1.35rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card-desc { font-size: 0.9rem; color: var(--c-muted); margin-bottom: 1.5rem; flex: 1; line-height: 1.6; }
+    
+    .card-footer { display: flex; align-items: center; justify-content: space-between; pt: 1rem; border-top: 1px solid var(--c-border); }
+    .card-price { font-family: var(--f-mono); font-size: 1.2rem; font-weight: 700; color: var(--c-primary); }
+    .card-add {
+      width: 42px; height: 42px; border-radius: var(--r-sm); background: var(--c-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.3s;
+    }
+    .card-add:hover { background: #e04d13; transform: scale(1.05); }
+
+    /* ============================================
+       RESERVATION
+    ============================================ */
+    #reservation { background: var(--c-bg); display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .res-visual { position: relative; height: 580px; border-radius: var(--r-xl); overflow: hidden; }
+    .res-visual img { width: 100%; height: 100%; object-fit: cover; }
+    .res-visual-card {
+      position: absolute; bottom: 2rem; right: 2rem; background: var(--c-primary); color: #fff;
+      padding: 1.8rem 2.5rem; border-radius: var(--r-md); text-align: center; box-shadow: 0 15px 35px var(--c-primary-glow);
+    }
+    .res-visual-card .big { font-family: var(--f-display); font-size: 2.8rem; font-weight: 900; line-height: 1; }
+    
+    .res-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.5rem; }
+    .form-field label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--c-muted); }
+    .form-field input, .form-field textarea, .form-field select {
+      background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm);
+      padding: 0.9rem 1.2rem; color: var(--c-text); font-family: var(--f-body); font-size: 0.95rem; outline: none; transition: all 0.3s;
+    }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+      border-color: var(--c-primary); box-shadow: 0 0 0 4px var(--c-primary-glow);
+    }
+    .btn-full {
+      width: 100%; padding: 1.1rem; background: var(--c-primary); color: #fff; border-radius: var(--r-sm);
+      font-size: 1rem; font-weight: 700; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.8rem;
+      box-shadow: 0 10px 25px var(--c-primary-glow);
+    }
+    .btn-full:hover { transform: translateY(-2px); box-shadow: 0 15px 35px var(--c-primary-glow); background: #e04d13; }
+
+    /* ============================================
+       GALLERY
+    ============================================ */
+    #gallery { background: var(--c-surface); }
+    .gallery-masonry { columns: 4; column-gap: 1.5rem; }
+    .gallery-item {
+      break-inside: avoid; margin-bottom: 1.5rem; border-radius: var(--r-md); overflow: hidden; position: relative;
+    }
+    .gallery-item img { width: 100%; transition: transform 0.6s ease; }
+    .gallery-item::after {
+      content: '\f00e'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; inset: 0;
+      background: rgba(255, 94, 36, 0.75); color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-item:hover::after { opacity: 1; }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(5,5,5,0.98); z-index: 2000;
+      display: none; align-items: center; justify-content: center; padding: 2rem; backdrop-filter: blur(10px);
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-img { max-width: 90vw; max-height: 80vh; border-radius: var(--r-md); object-fit: contain; }
+    .lightbox-close {
+      position: absolute; top: 2rem; right: 2rem; width: 50px; height: 50px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); color: #fff; font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ============================================
+       BENTO GRID ABOUT SECTION (Vibe Upgrade)
+    ============================================ */
+    #about { background: var(--c-bg); }
+    .bento-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(160px, auto); gap: 1.5rem; margin-top: 4rem;
+    }
+    .bento-item {
+      background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: 2rem;
+      display: flex; flex-direction: column; justify-content: center; transition: all 0.3s;
+    }
+    .bento-item:hover { border-color: var(--c-primary); transform: scale(1.02); }
+    .bento-item.main-text { grid-column: span 2; grid-row: span 2; justify-content: flex-start; }
+    .bento-item.image-fit { padding: 0; overflow: hidden; grid-row: span 2; }
+    .bento-item.image-fit img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .bento-item i { font-size: 2rem; color: var(--c-primary); margin-bottom: 1rem; }
+    .bento-item h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .bento-item p { font-size: 0.9rem; color: var(--c-muted); }
+
+    /* ============================================
+       TESTIMONIALS
+    ============================================ */
+    #testimonials { background: var(--c-surface); overflow: hidden; }
+    .testi-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; flex-wrap: wrap; gap: 2rem; }
+    .testi-nav { display: flex; gap: 0.8rem; }
+    .testi-arrow {
+      width: 50px; height: 50px; border-radius: 50%; background: var(--c-card); border: 1px solid var(--c-border);
+      color: var(--c-text); display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+    }
+    .testi-arrow:hover { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
+    
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; transition: transform 0.5s ease; }
+    .testi-card {
+      background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--r-md); padding: 2.5rem; position: relative;
+    }
+    .testi-card::before {
+      content: '\201C'; position: absolute; top: 1.5rem; right: 2rem; font-family: var(--f-display); font-size: 5rem; color: var(--c-primary); opacity: 0.15; line-height: 1;
+    }
+    .testi-stars { color: var(--c-secondary); font-size: 0.9rem; margin-bottom: 1.2rem; }
+    .testi-text { font-size: 1rem; color: var(--c-muted); line-height: 1.7; margin-bottom: 2rem; }
+    .testi-author { display: flex; align-items: center; gap: 1rem; }
+    .testi-avatar {
+      width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, var(--c-primary), var(--c-secondary));
+      display: flex; align-items: center; justify-content: center; font-family: var(--f-display); font-weight: 700; color: #fff;
+    }
+    .testi-author-name { font-weight: 700; font-size: 0.95rem; }
+    .testi-author-info { font-size: 0.8rem; color: var(--c-muted); }
+
+    /* ============================================
+       CONTACT
+    ============================================ */
+    #contact { background: var(--c-bg); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+    .contact-item { display: flex; align-items: flex-start; gap: 1.2rem; }
+    .contact-icon {
+      width: 48px; height: 48px; border-radius: var(--r-sm); background: var(--c-primary-glow);
+      display: flex; align-items: center; justify-content: center; color: var(--c-primary); font-size: 1.2rem; flex-shrink: 0;
+    }
+    .contact-item h4 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .contact-item p { font-size: 0.95rem; color: var(--c-muted); }
+    
+    .social-row { display: flex; gap: 1rem; margin-top: 1rem; }
+    .social-btn {
+      width: 44px; height: 44px; border-radius: var(--r-sm); background: var(--c-surface); border: 1px solid var(--c-border);
+      color: var(--c-text); display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+    }
+    .social-btn:hover { background: var(--c-primary); border-color: var(--c-primary); color: #fff; transform: translateY(-4px); }
+    .map-wrap { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--c-border); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .map-wrap iframe { display: block; border: none; filter: grayscale(0.5) contrast(0.95); }
+
+    /* ============================================
+       FOOTER
+    ============================================ */
+    footer {
+      background: var(--c-surface); border-top: 1px solid var(--c-border); padding: 3rem clamp(1.5rem, 6vw, 5rem);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem;
+    }
+    .footer-logo { font-family: var(--f-display); font-size: 1.6rem; font-weight: 900; }
+    .footer-logo span { color: var(--c-primary); }
+    footer p { font-size: 0.9rem; color: var(--c-muted); }
+
+    /* ============================================
+       CART PANEL
+    ============================================ */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 800; opacity: 0; visibility: hidden; transition: all 0.4s; backdrop-filter: blur(6px);
+    }
+    .cart-overlay.open { opacity: 1; visibility: visible; }
+    .cart-panel {
+      position: fixed; top: 0; right: -460px; width: min(460px, 90vw); height: 100%; background: var(--c-surface);
+      border-left: 1px solid var(--c-border); z-index: 900; display: flex; flex-direction: column; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cart-panel.open { right: 0; }
+    .cart-top { padding: 2.5rem 2rem 1.5rem; border-bottom: 1px solid var(--c-border); display: flex; align-items: center; justify-content: space-between; }
+    .cart-top h3 { font-family: var(--f-display); font-size: 1.5rem; font-weight: 700; }
+    .cart-close { width: 40px; height: 40px; border-radius: var(--r-sm); border: 1px solid var(--c-border); color: var(--c-text); display: flex; align-items: center; justify-content: center; }
+    .cart-body { flex: 1; overflow-y: auto; padding: 2rem; }
+    .cart-empty { text-align: center; padding: 4rem 1rem; color: var(--c-muted); }
+    .cart-empty i { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; opacity: 0.2; }
+    
+    .cart-item { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 0; border-bottom: 1px solid var(--c-border); }
+    .cart-item-img { width: 64px; height: 64px; border-radius: var(--r-sm); object-fit: cover; }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .cart-item-price { font-family: var(--f-mono); font-size: 0.9rem; color: var(--c-primary); }
+    .cart-item-qty { display: flex; align-items: center; gap: 0.6rem; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 8px; background: var(--c-card); border: 1px solid var(--c-border); color: var(--c-text); display: flex; align-items: center; justify-content: center; }
+    .qty-num { font-family: var(--f-mono); font-size: 0.95rem; min-width: 24px; text-align: center; }
+    
+    .cart-bottom { padding: 2rem; border-top: 1px solid var(--c-border); background: var(--c-card); }
+    .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .cart-total-amount { font-family: var(--f-mono); font-size: 1.4rem; font-weight: 700; color: var(--c-primary); }
+
+    /* ============================================
+       FLOATING CHAT & TOAST
+    ============================================ */
+    .chat-float { position: fixed; bottom: 2.5rem; right: 2.5rem; z-index: 700; display: flex; flex-direction: column; align-items: flex-end; gap: 0.8rem; }
+    .chat-btn { width: 60px; height: 60px; border-radius: 50%; background: #25D366; color: #fff; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(37,211,102,0.4); }
+    .chat-tooltip { background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm); padding: 0.6rem 1.2rem; font-size: 0.8rem; font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+    
+    .toast {
+      position: fixed; bottom: 3rem; left: 50%; transform: translateX(-50%) translateY(30px);
+      background: var(--c-surface); border: 1px solid var(--c-border); border-radius: var(--r-sm); padding: 1rem 1.8rem;
+      font-size: 0.9rem; font-weight: 700; box-shadow: 0 15px 35px rgba(0,0,0,0.3); z-index: 9999; opacity: 0; transition: all 0.4s;
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast i { color: var(--c-accent); }
+
+    /* ============================================
+       NEW FITUR: LUCK POPUP MODAL (Voucher)
+    ============================================ */
+    .promo-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000;
+      display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.5s; backdrop-filter: blur(8px);
+    }
+    .promo-modal.open { opacity: 1; visibility: visible; }
+    .promo-content {
+      background: var(--c-card); border: 2px solid var(--c-primary); padding: 3rem; border-radius: var(--r-lg);
+      max-width: 480px; width: 90%; text-align: center; position: relative; transform: scale(0.8); transition: transform 0.5s;
+    }
+    .promo-modal.open .promo-content { transform: scale(1); }
+    .promo-content h3 { font-family: var(--f-display); font-size: 2rem; margin-bottom: 1rem; color: var(--c-secondary); }
+    .promo-code {
+      display: inline-block; background: var(--c-bg); border: 1px dashed var(--c-primary);
+      padding: 0.8rem 2rem; font-family: var(--f-mono); font-size: 1.2rem; font-weight: 700; color: var(--c-primary); margin: 1.5rem 0; border-radius: var(--r-sm);
+    }
+    .promo-close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.2rem; color: var(--c-muted); }
+
+    /* ============================================
+       MOBILE INTERFACE RESPONSIVE
+    ============================================ */
+    .mobile-nav {
+      position: fixed; top: var(--nav-h); left: 0; right: 0; background: var(--c-surface); border-bottom: 1px solid var(--c-border); padding: 2rem; z-index: 450; display: none; flex-direction: column; gap: 0.5rem;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a { display: block; padding: 0.8rem 0; border-bottom: 1px solid var(--c-border); font-weight: 600; color: var(--c-muted); }
+    .mobile-nav a:hover { color: var(--c-primary); }
+
+    @media (max-width: 1200px) {
+      .gallery-masonry { columns: 3; }
+      .bento-grid { grid-template-columns: repeat(2, 1fr); }
+      .bento-item.main-text { grid-column: span 2; }
+    }
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { height: 50vh; }
+      #reservation { grid-template-columns: 1fr; }
+      .res-visual { display: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .testi-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .testi-grid { grid-template-columns: 1fr; }
+      .gallery-masonry { columns: 2; }
+      .form-row { grid-template-columns: 1fr; }
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-item.main-text { grid-column: span 1; }
+      .bento-item.image-fit { display: none; }
+    }
+    @media (max-width: 480px) { .gallery-masonry { columns: 1; } }
+
+    /* Scroll Animation Base */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.15s; }
+    .reveal-delay-2 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+
+<div class="custom-cursor" id="customCursor"></div>
+
+<!-- NAV BAR -->
+<nav class="nav" id="mainNav">
+  <a href="#home" class="nav-logo">Resto<span>GenZ</span> <em>✦</em></a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reservation">Reservasi</a></li>
+    <li><a href="#gallery">Galeri</a></li>
+    <li><a href="#about">Tentang</a></li>
+    <li><a href="#contact">Kontak</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-btn" id="darkToggle" title="Ubah Tema"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+    <button class="nav-btn" id="cartToggle" title="Keranjang"><i class="fa-solid fa-bag-shopping"></i><span class="cart-badge" id="cartCount">0</span></button>
+    <a href="#reservation" class="nav-cta">Reservasi Meja →</a>
+    <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+  <a href="#home">Home</a><a href="#menu">Menu</a><a href="#reservation">Reservasi</a><a href="#gallery">Galeri</a><a href="#about">Tentang</a><a href="#contact">Kontak</a>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Jakarta · Est. 2024</div>
+    <h1>Rasa Dunia,<br><em>Vibes</em> Lokal.</h1>
+    <p class="hero-sub">Bukan sekadar kuliner biasa — ini ruang ekspresi kultur Gen-Z. Nikmati sajian hidangan fusion berkelas dunia di tengah spot atmosfer paling estetik.</p>
+    <div class="hero-buttons">
+      <a href="#menu" class="btn-primary"><i class="fa-solid fa-utensils"></i> Jelajahi Menu</a>
+      <a href="#reservation" class="btn-secondary"><i class="fa-regular fa-calendar"></i> Reservasi Sekarang</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="num">4.9</div><div class="label">★ Rating Google</div></div>
+      <div class="stat-item"><div class="num">12K+</div><div class="label">Happy Customers</div></div>
+      <div class="stat-item"><div class="num">48+</div><div class="label">Signature Menu</div></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1000&h=1000&fit=crop" alt="Premium food vibe">
+    <div class="hero-badge">
+      <div style="font-size:1.8rem;">🏆</div>
+      <div><strong>Best Neo Restaurant</strong><br><span style="color:var(--c-muted); font-size:0.8rem;">Jakarta Culinary Awards 2024</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER / MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<!-- MENU SECTION -->
+<section id="menu">
+  <div class="menu-header">
+    <div>
+      <div class="section-label reveal">Menu Pilihan</div>
+      <h2 class="section-title reveal reveal-delay-1">Cita Rasa <em>Eksklusif</em></h2>
+    </div>
+    <div class="menu-controls reveal reveal-delay-2">
+      <!-- LIVE SEARCH COMPONENT -->
+      <div class="search-wrap">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="menuSearch" placeholder="Cari sajian favoritmu...">
+      </div>
+      <div class="filter-group" id="filterGroup">
+        <button class="filter-btn active" data-filter="all">Semua</button>
+        <button class="filter-btn" data-filter="makanan">Makanan</button>
+        <button class="filter-btn" data-filter="minuman">Minuman</button>
+        <button class="filter-btn" data-filter="dessert">Dessert</button>
+      </div>
+    </div>
+  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<!-- RESERVASI SECTION -->
+<section id="reservation">
+  <div class="res-visual reveal"><img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=700&h=800&fit=crop" alt="Vibe Resto"><div class="res-visual-card"><div class="big">24/7</div><div style="font-size:0.85rem; opacity:0.8;">Instant Confirmation</div></div></div>
+  <div>
+    <div class="section-label reveal">Online Booking</div>
+    <h2 class="section-title reveal reveal-delay-1">Amankan <em>Meja-mu</em></h2>
+    <p class="section-sub reveal reveal-delay-2">Hindari antrean panjang. Pilih area terbaik yang sesuai dengan keseruan nongkrongmu.</p>
+    <form class="res-form reveal" id="reservationForm">
+      <div class="form-row">
+        <div class="form-field"><label>Nama Lengkap</label><input type="text" id="resName" placeholder="Nama Anda" required></div>
+        <div class="form-field"><label>Alamat Email</label><input type="email" id="resEmail" placeholder="nama@email.com"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Tanggal Kehadiran</label><input type="date" id="resDate" required></div>
+        <div class="form-field"><label>Waktu / Jam</label><input type="time" id="resTime" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Jumlah Tamu</label><select id="resGuests"><option>1 orang</option><option selected>2 orang</option><option>3 orang</option><option>4 orang</option><option>5–8 orang</option><option>9+ orang</option></select></div>
+        <div class="form-field"><label>Pilihan Area</label><select id="resArea"><option>Indoor — AC Area</option><option>Outdoor — Rooftop Vibe</option><option>Private VVIP Room</option><option>Bar Island</option></select></div>
+      </div>
+      <div class="form-field"><label>Catatan Tambahan</label><textarea id="resMessage" rows="3" placeholder="Ulang tahun, anniversary, atau preferensi posisi tempat duduk..."></textarea></div>
+      <button type="submit" class="btn-full"><i class="fa-brands fa-whatsapp"></i> Ajukan Reservasi Instan</button>
+    </form>
+  </div>
+</section>
+
+<!-- GALLERY SECTION -->
+<section id="gallery">
+  <div class="section-label reveal">Aesthetic Space</div>
+  <h2 class="section-title reveal reveal-delay-1">Sudut <em>Instagrammable</em></h2>
+  <p class="section-sub reveal reveal-delay-2">Setiap detail tata ruang dikonsep secara matang agar setiap potret momenmu tampil menakjubkan.</p>
+  <div class="gallery-masonry reveal" id="galleryGrid"></div>
+</section>
+
+<!-- BENTO GRID ABOUT SECTION -->
+<section id="about">
+  <div class="section-label reveal">Kultur & Filosofi</div>
+  <h2 class="section-title reveal reveal-delay-1">Lebih dari <em>Ruang Makan</em></h2>
+  <div class="bento-grid">
+    <div class="bento-item main-text">
+      <h3 style="font-family:var(--f-display); font-size:1.8rem; margin-bottom:1rem;">The TaliwangHQ Experience</h3>
+      <p style="font-size:1.05rem; line-height:1.8;">Kami percaya bahwa menyantap hidangan lezat harus diimbangi dengan atmosfer lingkungan yang memicu inspirasi kreatif. Menyatukan cita rasa kuliner modern berskala global dengan kehangatan kultur lokal asli Indonesia.</p>
+    </div>
+    <div class="bento-item image-fit"><img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&h=500&fit=crop" alt="Chef craft"></div>
+    <div class="bento-item"><i class="fa-solid fa-leaf"></i><h4>Premium Quality</h4><p>Seluruh bahan baku diolah dalam kondisi segar higienis setiap harinya.</p></div>
+    <div class="bento-item"><i class="fa-solid fa-music"></i><h4>Live Performance</h4><p>Nikmati alunan syahdu live music akustik setiap akhir pekan.</p></div>
+    <div class="bento-item"><i class="fa-solid fa-wifi"></i><h4>Ultrafast WiFi</h4><p>Fasilitas koneksi internet 100 Mbps, andalan pengerjaan tugas & WFC.</p></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS SECTION -->
+<section id="testimonials">
+  <div class="testi-header">
+    <div><div class="section-label reveal">Review Jujur</div><h2 class="section-title reveal reveal-delay-1">Suara <em>Gen-Z</em></h2></div>
+    <div class="testi-nav reveal"><button class="testi-arrow" id="testiPrev"><i class="fa-solid fa-arrow-left"></i></button><button class="testi-arrow" id="testiNext"><i class="fa-solid fa-arrow-right"></i></button></div>
+  </div>
+  <div class="testi-grid" id="testiGrid"></div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section id="contact">
+  <div class="section-label reveal">Hubungi Kami</div>
+  <h2 class="section-title reveal reveal-delay-1">Kunjungi <em>Skena Kami</em></h2>
+  <div class="contact-grid" style="margin-top: 4rem;">
+    <div class="contact-info">
+      <div class="contact-item reveal"><div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div><div><h4>Lokasi Restoran</h4><p>Jl. Kuliner No. 99, Blok M, Kemang, Jakarta Selatan</p></div></div>
+      <div class="contact-item reveal reveal-delay-1"><div class="contact-icon"><i class="fa-solid fa-phone"></i></div><div><h4>Hotline & WhatsApp</h4><p>+62 812-3456-7890</p></div></div>
+      <div class="contact-item reveal reveal-delay-2"><div class="contact-icon"><i class="fa-solid fa-envelope"></i></div><div><h4>Email Resmi</h4><p>hi@TaliwangHQ.id</p></div></div>
+      <div class="social-row reveal"><a href="#" class="social-btn"><i class="fa-brands fa-instagram"></i></a><a href="#" class="social-btn"><i class="fa-brands fa-tiktok"></i></a><a href="#" class="social-btn"><i class="fa-brands fa-twitter"></i></a></div>
+    </div>
+    <div class="map-wrap reveal"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.0!2d106.8!3d-6.2!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMTInMDAuMCJTIDEwNsKwNDgnMDAuMCJF!5e0!3m2!1sen!2sid!4v1610000000000" width="100%" height="400" loading="lazy"></iframe></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Resto<span>GenZ</span></div>
+  <p>© 2026 TaliwangHQ Premium. Crafted for global standard experiences.</p>
+</footer>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-top"><h3>Daftar Order</h3><button class="cart-close" id="cartClose"><i class="fa-solid fa-xmark"></i></button></div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-bottom">
+    <div class="cart-total-row"><span>Subtotal Tagihan</span><span class="cart-total-amount" id="cartTotal">Rp 0</span></div>
+    <button class="btn-full" id="checkoutBtn"><i class="fa-brands fa-whatsapp"></i> Kirim Pesanan Sekarang</button>
+  </div>
+</div>
+
+<!-- LUCK PROMO MODAL COMPONENT -->
+<div class="promo-modal" id="promoModal">
+  <div class="promo-content">
+    <button class="promo-close-btn" id="promoClose"><i class="fa-solid fa-xmark"></i></button>
+    <h3>🎁 Keberuntungan Gen-Z!</h3>
+    <p>Kamu beruntung mendapatkan potongan harga eksklusif dine-in hari ini!</p>
+    <div class="promo-code">VIBESTASTE15</div>
+    <p style="font-size:0.8rem; color:var(--c-muted);">Tunjukkan kode voucher di atas kepada kasir saat pembayaran.</p>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox"><button class="lightbox-close" id="lightboxClose"><i class="fa-solid fa-xmark"></i></button><img class="lightbox-img" id="lightboxImg" src="" alt=""></div>
+
+<!-- CHAT FLOATING & TOAST COMPONENTS -->
+<div class="chat-float"><div class="chat-tooltip">Ada pertanyaan? Chat kami!</div><button class="chat-btn" id="chatBtn"><i class="fa-brands fa-whatsapp"></i></button></div>
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toastMsg">Sukses ditambahkan!</span></div>
+
+<!-- SCRIPTS -->
+<script>
+const PHONE = '6281234567890';
+
+const menuItems = [
+  { id:1,  name:'Smash Burger Deluxe',  cat:'makanan', price:45000, stars:4.9, desc:'Double angus beef, melted cheese, caramelized onion, premium sauce', img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop' },
+  { id:2,  name:'Truffle Cream Pasta',  cat:'makanan', price:58000, stars:4.8, desc:'Creamy truffle blend, wild mushroom infusion, shaved authentic parmesan', img:'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&h=300&fit=crop' },
+  { id:3,  name:'Crispy Katsu Curry',   cat:'makanan', price:42000, stars:4.7, desc:'Panko-crusted chicken fillet with aromatic Japanese house curry paste', img:'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=400&h=300&fit=crop' },
+  { id:4,  name:'Super Dragon Bowl',    cat:'makanan', price:48000, stars:4.8, desc:'Organic smooth acai base topped with chia seed, almond slice, wild berry', img:'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop' },
+  { id:5,  name:'Matcha Premium Oat',   cat:'minuman', price:32000, stars:4.9, desc:'Uji matcha ceremonial level, healthy oat milk, raw organic honey', img:'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&h=300&fit=crop' },
+  { id:6,  name:'Strawberry Mojito Fix',cat:'minuman', price:35000, stars:4.7, desc:'Crushed garden mint, fresh strawberries, dynamic carbonated splash', img:'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&h=300&fit=crop' },
+  { id:7,  name:'Cold Brew Float Peak', cat:'minuman', price:40000, stars:4.8, desc:'24h cold dripping espresso with a scoop of soft vanilla gelato craft', img:'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop' },
+  { id:8,  name:'Red Velvet Royal',     cat:'dessert', price:38000, stars:4.9, desc:'Soft layer velvet cake structured with light cream cheese texture', img:'https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=400&h=300&fit=crop' },
+  { id:9,  name:'Croissant Artisan',    cat:'dessert', price:45000, stars:4.8, desc:'Buttery pastry layer filled with single scoop of premium gelato', img:'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop' }
+];
+
+const testimonials = [
+  { name:'Alya R.', info:'Food Vlogger · 19 thn', text:'Tempatnya super chill & aesthetic. Smash Burger paling solid di daerah Jaksel!', stars:5 },
+  { name:'Raka P.', info:'Mahasiswa UI · 22 thn', text:'Harga sangat rasional dengan kualitas ambience premium yang didapatkan.', stars:5 },
+  { name:'Sinta D.', info:'Remote Worker · 25 thn', text:'Fasilitas stopkontak berlimpah & internet kencang. Best spot buat WFC.', stars:5 }
+];
+
+const galleryImgs = [
+  'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&fit=crop',
+  'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&fit=crop',
+  'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&fit=crop',
+  'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&fit=crop'
+];
+
+/* CUSTOM MOUSE CURSOR IMPLEMENTATION */
+const cursor = document.getElementById('customCursor');
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button, input, select, textarea').forEach(item => {
+  item.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+  item.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+});
+
+/* THEME CONTROLLER */
+const darkToggle = document.getElementById('darkToggle');
+const themeIcon  = document.getElementById('themeIcon');
+darkToggle.addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  themeIcon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+});
+
+/* MENU TICKER MARQUEE BUILDER */
+const tickerData = ['Smash Burger ✦', 'Acoustic Weekend ✦', 'Rooftop Lounge ✦', 'Matcha Latte ✦', 'WiFi 100Mbps ✦'];
+const track = document.getElementById('marqueeTrack');
+[...tickerData, ...tickerData, ...tickerData].forEach(txt => {
+  const node = document.createElement('span'); node.innerHTML = txt; track.appendChild(node);
+});
+
+/* RENDER MENU CARDS WITH SEARCH AND FILTER */
+let activeFilter = 'all';
+let searchQuery = '';
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  grid.innerHTML = '';
+  
+  const filtered = menuItems.filter(item => {
+    const matchesFilter = activeFilter === 'all' || item.cat === activeFilter;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
+
+  if(filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:3rem; color:var(--c-muted);">Menu yang Anda cari tidak ditemukan.</div>`;
+    return;
+  }
+
+  filtered.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'menu-card reveal visible';
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${item.img}" alt="${item.name}">
+        <span class="card-category">${item.cat}</span>
+        <button class="card-wishlist"><i class="fa-regular fa-heart"></i></button>
+      </div>
+      <div class="card-body">
+        <div class="card-rating"><i class="fa-solid fa-star"></i> ${item.stars}</div>
+        <div class="card-name">${item.name}</div>
+        <div class="card-desc">${item.desc}</div>
+        <div class="card-footer">
+          <span class="card-price">Rp ${item.price.toLocaleString('id-ID')}</span>
+          <button class="card-add" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}" data-img="${item.img}"><i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('.card-add').forEach(btn => btn.addEventListener('click', addToCart));
+  grid.querySelectorAll('.card-wishlist').forEach(btn => btn.addEventListener('click', function() {
+    this.classList.toggle('liked');
+    this.querySelector('i').className = this.classList.contains('liked') ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+  }));
+}
+
+document.getElementById('filterGroup').addEventListener('click', e => {
+  if (!e.target.classList.contains('filter-btn')) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  activeFilter = e.target.dataset.filter;
+  renderMenu();
+});
+
+document.getElementById('menuSearch').addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  renderMenu();
+});
+
+renderMenu();
+
+/* CART PROCESSES */
+let cart = [];
+function addToCart(e) {
+  const d = e.currentTarget.dataset;
+  const ex = cart.find(i => i.id === +d.id);
+  if (ex) ex.qty++; else cart.push({ id: +d.id, name: d.name, price: +d.price, img: d.img, qty: 1 });
+  updateCart(); showToast(`${d.name} masuk daftar order!`);
+}
+
+function updateCart() {
+  const b = document.getElementById('cartBody');
+  const total = document.getElementById('cartTotal');
+  document.getElementById('cartCount').textContent = cart.reduce((s,i)=>s+i.qty, 0);
+  total.textContent = 'Rp ' + cart.reduce((s,i)=>s+(i.price*i.qty), 0).toLocaleString('id-ID');
+
+  if(!cart.length) {
+    b.innerHTML = `<div class="cart-empty"><i class="fa-solid fa-bag-shopping"></i><p>Belum ada pesanan.</p></div>`; return;
+  }
+  b.innerHTML = '';
+  cart.forEach((item, idx) => {
+    const r = document.createElement('div'); r.className = 'cart-item';
+    r.innerHTML = `
+      <img class="cart-item-img" src="${item.img}">
+      <div class="cart-item-info"><div class="cart-item-name">${item.name}</div><div class="cart-item-price">Rp ${item.price.toLocaleString('id-ID')}</div></div>
+      <div class="cart-item-qty">
+        <button class="qty-btn" onclick="alterQty(${idx},-1)"><i class="fa-solid fa-minus"></i></button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="alterQty(${idx},1)"><i class="fa-solid fa-plus"></i></button>
+      </div>
+    `;
+    b.appendChild(r);
+  });
+}
+
+window.alterQty = (idx, amt) => {
+  cart[idx].qty += amt; if(cart[idx].qty <= 0) cart.splice(idx,1); updateCart();
+};
+
+document.getElementById('cartToggle').addEventListener('click', () => {
+  document.getElementById('cartOverlay').classList.add('open'); document.getElementById('cartPanel').classList.add('open');
+});
+document.getElementById('cartClose').addEventListener('click', closeCart);
+document.getElementById('cartOverlay').addEventListener('click', closeCart);
+function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); document.getElementById('cartPanel').classList.remove('remove'); document.getElementById('cartPanel').classList.remove('open'); }
+
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+  if(!cart.length) return;
+  let text = 'Halo TaliwangHQ, saya mau order:%0A';
+  cart.forEach(i => text += `- ${i.name} (${i.qty}x)%0A`);
+  window.open(`https://wa.me/${PHONE}?text=${text}`, '_blank');
+});
+
+/* TESTIMONIAL SLIDER AUTOMATION */
+let currentTesti = 0;
+function renderTestimonials() {
+  const container = document.getElementById('testiGrid'); container.innerHTML = '';
+  testimonials.forEach(t => {
+    const c = document.createElement('div'); c.className = 'testi-card';
+    c.innerHTML = `<div class="testi-stars">★★★★★</div><p class="testi-text">"${t.text}"</p><div class="testi-author"><div class="testi-avatar">${t.name[0]}</div><div><div class="testi-author-name">${t.name}</div><div class="testi-author-info">${t.info}</div></div></div>`;
+    container.appendChild(c);
+  });
+}
+renderTestimonials();
+
+/* INTERACTIVE LUCKY MODAL POPUP */
+setTimeout(() => {
+  document.getElementById('promoModal').classList.add('open');
+}, 2500);
+document.getElementById('promoClose').addEventListener('click', () => document.getElementById('promoModal').classList.remove('open'));
+
+/* MOBILE HAMBURGER CONTROL */
+const ham = document.getElementById('hamburger');
+const mob = document.getElementById('mobileNav');
+ham.addEventListener('click', () => { mob.classList.toggle('open'); });
+mob.querySelectorAll('a').forEach(l => l.addEventListener('click', () => mob.classList.remove('open')));
+
+/* IMAGES INTERACTION (GALLERY MASONRY) */
+const gGrid = document.getElementById('galleryGrid');
+galleryImgs.forEach(src => {
+  const d = document.createElement('div'); d.className = 'gallery-item';
+  d.innerHTML = `<img src="${src}">`;
+  d.addEventListener('click', () => {
+    document.getElementById('lightboxImg').src = src; document.getElementById('lightbox').classList.add('open');
+  });
+  gGrid.appendChild(d);
+});
+document.getElementById('lightboxClose').addEventListener('click', () => document.getElementById('lightbox').classList.remove('open'));
+
+/* RESERVATION TELEMETRY */
+document.getElementById('reservationForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const n = document.getElementById('resName').value;
+  const d = document.getElementById('resDate').value;
+  const t = document.getElementById('resTime').value;
+  window.open(`https://wa.me/${PHONE}?text=Halo%20TaliwangHQ,%20saya%20booking%20atas%20nama%20${n}%20tanggal%20${d}%20jam%20${t}`, '_blank');
+});
+
+/* TOAST TRIGGER */
+function showToast(msg) {
+  const el = document.getElementById('toast'); document.getElementById('toastMsg').textContent = msg;
+  el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* SCROLL INTERSECTION REVEAL */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.05 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
+
+```
