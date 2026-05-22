@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Restaurant POS</string>
+    <string name="total">Total</string>
+    <string name="reset">Reset</string>
+    <string name="pay">Bayar</string>
+    <string name="no_order">Belum ada pesanan...</string>
+    <string name="payment_success">Pembayaran Berhasil!</string>
+    <string name="thank_you">Terima Kasih!</string>
+</resources>
